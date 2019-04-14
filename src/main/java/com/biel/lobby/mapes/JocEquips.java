@@ -8,6 +8,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -29,6 +31,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Wool;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.biel.BielAPI.Utils.IconMenu;
@@ -610,10 +614,61 @@ public abstract class JocEquips extends Joc {
 	private boolean areInSameTeam(Player p1, Player p2) {
 		return obtenirEquip(p1).equals(obtenirEquip(p2));
 	}
+	public class Millora{
+		String nom;
+		String descr;
+		private PotionEffectType efecte;
+		private int nivell;
+		private int duracio;
+		private ArrayList<Integer> potencies;
+		
+		public Millora(String nom, PotionEffectType efecte, String descr){
+			this.nom=nom;
+			this.efecte=efecte;
+			this.descr=descr;
+			this.nivell=0;
+			this.potencies= new ArrayList<Integer>();
+			this.duracio=9999;
+		}
+		
+		public Millora(String nom, PotionEffectType efecte, String descr, ArrayList<Integer> power){
+			this.nom=nom;
+			this.efecte=efecte;
+			this.descr=descr;
+			this.nivell=0;
+			this.potencies= new ArrayList<Integer>();
+			this.duracio=9999;
+		}
+		
+		public String getNom() {
+			return nom;
+		}
+		
+		public PotionEffect getPotionEffect(){
+			if(nivell<=0)return null;
+			return(new PotionEffect(this.efecte, this.duracio,this.potencies.get(nivell)));
+		}
+		
+		public void addPower(int potencia){
+			this.potencies.add(potencia);
+		}
+		public void addPower(int nivell, int potencia){
+			this.potencies.add(nivell, potencia);
+		}
+		public void levelUp(){
+			System.out.println(this.potencies.toString());
+			if(this.potencies.size()>nivell) nivell++;
+			
+		}
+		
+	}
+	
 	public class Equip{
 		ArrayList<String> Players = new ArrayList<>();
 		DyeColor color = DyeColor.GRAY;
 		String adjectiu = "";
+		ArrayList <Millora> Millores = new ArrayList<Millora>();
+		
 		public Equip(DyeColor color, String adj) {
 			super();
 			this.color = color;
@@ -624,6 +679,18 @@ public abstract class JocEquips extends Joc {
 		}
 		public ChatColor getChatColor() {
 			return ColorConverter.dyeToChat(color);
+		}
+		public ArrayList<Millora> getMillores() {
+			return Millores;
+		}
+		public void addMillora(Millora millora) {
+			this.Millores.add(millora);
+		}
+		public void levelUp(int millora){
+			Logger log = Bukkit.getLogger();
+			log.info(this.Millores.toString());
+			log.info("Level up a la millora " + millora);
+			this.Millores.get(millora).levelUp();
 		}
 		public void setColor(DyeColor color) {
 			this.color = color;
@@ -804,7 +871,7 @@ public abstract class JocEquips extends Joc {
 		if(eqKilled != null && eqKiller != null){
 			evt.setDeathMessage(eqKilled.getChatColor() + killed.getName() + ChatColor.GRAY + " ha estat assassinat per " + eqKiller.getChatColor() + killer.getName());
 		}
-		//TODO add random death causes
+		
 	}
 
 }
