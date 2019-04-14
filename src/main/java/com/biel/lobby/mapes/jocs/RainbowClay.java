@@ -1,6 +1,7 @@
 package com.biel.lobby.mapes.jocs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.*;
@@ -48,16 +49,16 @@ public class RainbowClay extends JocObjectius {
 
 	@Override
 	protected ArrayList<Equip> getDesiredTeams() {
+
 		ArrayList<Equip> equips = new ArrayList<>();
 		
 		equips.add(new EquipObjectius(DyeColor.RED, "vermell")); // Id 0
 		equips.add(new EquipObjectius(DyeColor.BLUE, "blau")); // Id 1
 		
 		return equips;
+
 	}
-	
-	
-	
+
 	@Override
 	protected ArrayList<Objectiu> getDesiredObjectivesTeam(EquipObjectius e) {
 		ArrayList<Objectiu> objectius = new ArrayList<>();
@@ -190,54 +191,46 @@ public class RainbowClay extends JocObjectius {
 
 		return items;
 	}
-	private boolean prova=true;
-	
+
 	@Override
 	protected void donarEfectesInicials(Player ply) {
+
 		super.donarEfectesInicials(ply);
 
 		double m = getBalancingMultiplier(obtenirEquip(ply));
-		if(prova){
-			definicioEfectes();
-			ply.sendMessage("Efectes Creats");
-			ply.sendMessage(this.Equips.get(0).getMillores().get(0).getNom());
-			ply.sendMessage(this.Equips.get(0).getMillores().get(1).getNom());
-			prova=false;
-		}
+
 		ply.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, (int) (30 * 10 * (m - 0.5)), 5, true), true);
 		ply.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 3, 1, true), true);
 		ply.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 20 * 30, 0, true), true);
 		ply.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 5, 3, true), true);
 		ply.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, (int) (20 * 19 * m), 1, true), true);
-		
-		if(this.Equips.get(0).getPlayers().contains(ply)){
-			for(Millora aux:this.Equips.get(0).getMillores()){
-				if(aux.getPotionEffect()!=null)
-					ply.addPotionEffect(aux.getPotionEffect());
-			}
-		}else{
-			for(Millora aux:this.Equips.get(1).getMillores()){
-				if(aux.getPotionEffect()!=null)
-					ply.addPotionEffect(aux.getPotionEffect());
-			}
+
+
+		ply.sendMessage("Millores actives");
+		Bukkit.broadcastMessage("objetenEquip a fins de donarEfectes " + obtenirEquip(ply ).getClass().getName());
+
+		for(Millora millora : ((EquipObjectius) obtenirEquip(ply)).getMillores()) {
+
+			ply.sendMessage(millora.getNom());
+			if(millora.getPotionEffect() != null) ply.addPotionEffect(millora.getPotionEffect());
+
 		}
 
 	}
-	
-	private void definicioEfectes(){
-		ArrayList<Integer> vidaNivells= new ArrayList<Integer>();
-		for(int i=1;i<=10;i++){
-			vidaNivells.add(i);
+
+	@Override
+	protected void definicioEfectes() {
+
+		ArrayList<Integer> vidaNivells = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		ArrayList<Integer> danyNivells = new ArrayList<>(Arrays.asList(2, 4, 6, 8, 10));
+
+		for(Equip team: this.Equips) {
+			EquipObjectius a = (EquipObjectius) team;
+			a.addMillora(new Millora("Vida",PotionEffectType.HEALTH_BOOST ,"Augment de Vida", vidaNivells));
+			a.addMillora(new Millora("Dany",PotionEffectType.INCREASE_DAMAGE ,"Augment d'atac", danyNivells));
+
 		}
-		this.Equips.get(0).addMillora(new Millora("Vida",PotionEffectType.HEALTH_BOOST ,"Augment de Vida", vidaNivells));
-		this.Equips.get(1).addMillora(new Millora("Vida",PotionEffectType.HEALTH_BOOST ,"Augment de Vida", vidaNivells));
-		ArrayList<Integer> danyNivells= new ArrayList<Integer>();
-		for(int i=1;i<=10;i++){
-			vidaNivells.add(i%2);
-		}
-		this.Equips.get(0).addMillora(new Millora("Dany",PotionEffectType.INCREASE_DAMAGE ,"Augment d'atac", danyNivells));
-		this.Equips.get(1).addMillora(new Millora("Dany",PotionEffectType.INCREASE_DAMAGE ,"Augment d'atac", danyNivells));
-		
+
 	}
 
 	@Override
@@ -308,8 +301,6 @@ public class RainbowClay extends JocObjectius {
 
 			if (team.getId() == 1) {
 				reg = "base0Area";
-			} else {
-				reg = "base1Area";
 			}
 
 			Cuboid base = pMapaActual().ObtenirCuboid(reg, getWorld());
@@ -322,19 +313,18 @@ public class RainbowClay extends JocObjectius {
 				BountifulAPI.sendActionBar(ply, msg, 150);
 
 			}
-		}	
+		}
 
-		return;
 	}
-	
-	
 	
 	protected void onPlayerInteract(PlayerInteractEvent evt, Player p) {
 
 		super.onPlayerInteract(evt, p);
-		if ((evt.getAction() != Action.RIGHT_CLICK_BLOCK) || (evt.getClickedBlock().getType() != Material.CHEST)) {
-			return;
-		}
+
+		if (
+			(evt.getAction() != Action.RIGHT_CLICK_BLOCK) ||
+			(evt.getClickedBlock().getType() != Material.CHEST)
+		) return;
 
 		Player ply = evt.getPlayer();
 		Equip team = obtenirEquip(ply);
@@ -344,8 +334,6 @@ public class RainbowClay extends JocObjectius {
 
 		if (team.getId() == 1) {
 			reg = "base0Area";
-		} else {
-			reg = "base1Area";
 		}
 
 		Cuboid base = pMapaActual().ObtenirCuboid(reg, getWorld());
@@ -357,7 +345,6 @@ public class RainbowClay extends JocObjectius {
 			ply.playSound(ply.getLocation(), Sound.BLOCK_CHEST_LOCKED, 100.0F, 0.0F);
 			evt.setCancelled(true);
 		}
-		return;
 
 	}
 
@@ -514,11 +501,14 @@ public class RainbowClay extends JocObjectius {
 	
 	public final ItemStack ATACK_UP = new ItemStack(Material.WOOD_SWORD);
 	public void watchInventory(Player ply){
+
 		if(ply.getInventory().contains(ATACK_UP)){
+
 			ply.getInventory().remove(ATACK_UP);
-			if(this.Equips.get(0).getPlayers().contains(ply))this.Equips.get(0).levelUp(0);
-			if(this.Equips.get(1).getPlayers().contains(ply))this.Equips.get(1).levelUp(0);
+			for (int i = 0; i < ((EquipObjectius) obtenirEquip(ply)).getMillores().size(); i++) ((EquipObjectius) obtenirEquip(ply)).levelUp(i);
+
 		}
+
 	}
 	
 

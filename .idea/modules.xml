@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Minicat.iml" filepath="$PROJECT_DIR$/.idea/modules/Minicat.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Minicat_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Minicat_main.iml" group="Minicat" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Minicat_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Minicat_test.iml" group="Minicat" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JoniMinicat.iml" filepath="$PROJECT_DIR$/.idea/modules/JoniMinicat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JoniMinicat_main.iml" filepath="$PROJECT_DIR$/.idea/modules/JoniMinicat_main.iml" group="JoniMinicat" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JoniMinicat_test.iml" filepath="$PROJECT_DIR$/.idea/modules/JoniMinicat_test.iml" group="JoniMinicat" />
     </modules>
   </component>
 </project>

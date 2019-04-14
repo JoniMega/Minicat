@@ -19,6 +19,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import com.biel.lobby.mapes.JocEquips.Equip;
 import com.biel.lobby.utilities.ColorConverter;
 import com.biel.lobby.utilities.ScoreBoardUpdater;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public abstract class JocObjectius extends JocEquips {
 
@@ -160,7 +162,75 @@ public abstract class JocObjectius extends JocEquips {
 		return super.getGameProgressETA() * 0.45 + objCompletionRatio * 0.5 + advantageRatio * 0.1; //EXCESS 5%
 	}
 
+	public class Millora{
+		String nom;
+		String descr;
+		private PotionEffectType efecte;
+		private int nivell;
+		private int duracio;
+		private ArrayList<Integer> potencies;
+
+		public Millora(String nom, PotionEffectType efecte, String descr){
+			this.nom=nom;
+			this.efecte=efecte;
+			this.descr=descr;
+			this.nivell=0;
+			this.potencies= new ArrayList<Integer>();
+			this.duracio=9999;
+		}
+
+		public Millora(String nom, PotionEffectType efecte, String descr, ArrayList<Integer> power){
+			this.nom=nom;
+			this.efecte=efecte;
+			this.descr=descr;
+			this.nivell=0;
+			this.potencies= new ArrayList<Integer>();
+			this.duracio=9999;
+		}
+
+		public String getNom() {
+			return nom;
+		}
+
+		public PotionEffect getPotionEffect(){
+			if(nivell<=0)return null;
+			return(new PotionEffect(this.efecte, this.duracio,this.potencies.get(nivell)));
+		}
+
+		public void addPower(int potencia){
+			this.potencies.add(potencia);
+		}
+		public void addPower(int nivell, int potencia){
+			this.potencies.add(nivell, potencia);
+		}
+		public void levelUp() {
+			System.out.println(this.potencies.toString());
+			if(this.potencies.size()>nivell) nivell++;
+
+		}
+
+	}
+
 	public class EquipObjectius extends Equip{
+
+		private ArrayList <Millora> Millores = new ArrayList<Millora>();
+		public ArrayList<Millora> getMillores() {
+
+			// Bukkit.broadcastMessage("getMillores");
+			// Bukkit.broadcastMessage(Millores.toString());
+			// Bukkit.broadcastMessage(this.toString());
+			return Millores;
+		}
+		public void addMillora(Millora millora) {
+			this.Millores.add(millora);
+			// Bukkit.broadcastMessage("millora afegida " + this);
+		}
+
+		public void levelUp(int millora){
+			Bukkit.broadcastMessage("Level up de " + millora + " ;)");
+			this.getMillores().get(millora).levelUp();
+		}
+
 		ArrayList<Objectiu> Objectius = new ArrayList<>();
 		public EquipObjectius(DyeColor color, String adj) {
 			super(color, adj);

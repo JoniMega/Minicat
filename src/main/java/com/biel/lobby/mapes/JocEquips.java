@@ -57,10 +57,16 @@ public abstract class JocEquips extends Joc {
 	public void initialize() {
 		super.initialize();
 		initTeams();
+		definicioEfectes();
 	}
+
+	protected void definicioEfectes() {
+
+	};
+
 	public void initTeams(){
 		ArrayList<Equip> desiredTeams = getDesiredTeams();
-		if(desiredTeams == null)desiredTeams = getDesiredTeamsFromFile();
+		if(desiredTeams == null) desiredTeams = getDesiredTeamsFromFile();
 		Equips = desiredTeams;
 	}
 	@Override
@@ -231,22 +237,24 @@ public abstract class JocEquips extends Joc {
 		}
 
 	}
-	@SuppressWarnings("unchecked")
+
 	public <T extends Equip> T obtenirEquip(Player ply, Class<T> type){
-		if (ply == null){System.out.println("Null player");return null;}
+
+		if (ply == null) return null;
+
 		String name = ply.getName();
-		for (Equip e : Equips){
+		for (Equip e : this.Equips){
 
 			if (Utils.containsPlayerByName(e.getPlayers(), name)){
 				return (T) e;
 			}
 
 		}
-		if(JocIniciat){
-			//Bukkit.broadcastMessage("Alerta: " + name + " no �s a cap equip! -- Null");
-		}
+
 		return null;
+
 	}
+
 	public Equip obtenirEquip(Player ply){
 		return obtenirEquip(ply, Equip.class);
 	}
@@ -614,60 +622,12 @@ public abstract class JocEquips extends Joc {
 	private boolean areInSameTeam(Player p1, Player p2) {
 		return obtenirEquip(p1).equals(obtenirEquip(p2));
 	}
-	public class Millora{
-		String nom;
-		String descr;
-		private PotionEffectType efecte;
-		private int nivell;
-		private int duracio;
-		private ArrayList<Integer> potencies;
-		
-		public Millora(String nom, PotionEffectType efecte, String descr){
-			this.nom=nom;
-			this.efecte=efecte;
-			this.descr=descr;
-			this.nivell=0;
-			this.potencies= new ArrayList<Integer>();
-			this.duracio=9999;
-		}
-		
-		public Millora(String nom, PotionEffectType efecte, String descr, ArrayList<Integer> power){
-			this.nom=nom;
-			this.efecte=efecte;
-			this.descr=descr;
-			this.nivell=0;
-			this.potencies= new ArrayList<Integer>();
-			this.duracio=9999;
-		}
-		
-		public String getNom() {
-			return nom;
-		}
-		
-		public PotionEffect getPotionEffect(){
-			if(nivell<=0)return null;
-			return(new PotionEffect(this.efecte, this.duracio,this.potencies.get(nivell)));
-		}
-		
-		public void addPower(int potencia){
-			this.potencies.add(potencia);
-		}
-		public void addPower(int nivell, int potencia){
-			this.potencies.add(nivell, potencia);
-		}
-		public void levelUp(){
-			System.out.println(this.potencies.toString());
-			if(this.potencies.size()>nivell) nivell++;
-			
-		}
-		
-	}
-	
+
 	public class Equip{
 		ArrayList<String> Players = new ArrayList<>();
 		DyeColor color = DyeColor.GRAY;
 		String adjectiu = "";
-		ArrayList <Millora> Millores = new ArrayList<Millora>();
+
 		
 		public Equip(DyeColor color, String adj) {
 			super();
@@ -680,18 +640,8 @@ public abstract class JocEquips extends Joc {
 		public ChatColor getChatColor() {
 			return ColorConverter.dyeToChat(color);
 		}
-		public ArrayList<Millora> getMillores() {
-			return Millores;
-		}
-		public void addMillora(Millora millora) {
-			this.Millores.add(millora);
-		}
-		public void levelUp(int millora){
-			Logger log = Bukkit.getLogger();
-			log.info(this.Millores.toString());
-			log.info("Level up a la millora " + millora);
-			this.Millores.get(millora).levelUp();
-		}
+
+
 		public void setColor(DyeColor color) {
 			this.color = color;
 		}
