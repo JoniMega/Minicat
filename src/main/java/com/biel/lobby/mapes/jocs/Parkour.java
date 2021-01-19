@@ -736,6 +736,7 @@ public class Parkour extends JocScoreCombo{
 			}
 
 		}
+		/*
 		public class ZigZagBubble extends ParkourBubble{
 			//Single block with a torch
 			int n = Utils.NombreEntre(3, 5);
@@ -758,6 +759,7 @@ public class Parkour extends JocScoreCombo{
 				return 3 * n  + 1;
 			}
 		}
+		*/
 		
 		public class SingleBlockLineBubble extends ParkourBubble{
 			int n = Utils.NombreEntre(2, 4) * 2;
